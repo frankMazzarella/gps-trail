@@ -1,0 +1,7 @@
+{
+  "name": "gps-trail",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular"
+}
