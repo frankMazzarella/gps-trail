@@ -1,6 +1,9 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { IonicPage, NavController } from 'ionic-angular';
+import { PopoverController } from 'ionic-angular';
 import { Map, tileLayer } from 'leaflet';
+
+import { MenuPage } from '../menu/menu';
 
 /**
  * Generated class for the MapPage page.
@@ -19,7 +22,7 @@ export class MapPage {
   @ViewChild('map') mapContainer: ElementRef;
   private map: Map;
 
-  constructor(public navCtrl: NavController) { }
+  constructor(public navCtrl: NavController, public popoverCtrl: PopoverController) { }
 
   ionViewDidEnter() {
     this.initMap();
@@ -33,6 +36,11 @@ export class MapPage {
       '&copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
     const layer = tileLayer(tiles, { attribution, maxZoom: 20 });
     layer.addTo(this.map);
+  }
+
+  presentPopover(myEvent) {
+    let popover = this.popoverCtrl.create(MenuPage);
+    popover.present({ ev: myEvent });
   }
 }
 
