@@ -7,7 +7,7 @@ import { Geolocation } from '@ionic-native/geolocation';
 import { MapPage } from '../pages/map/map';
 
 @Component({
-  templateUrl: 'app.html'
+  template: '<ion-nav [root]="rootPage"></ion-nav>'
 })
 export class MyApp {
   rootPage: any = MapPage;

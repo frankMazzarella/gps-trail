@@ -6,13 +6,11 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { Geolocation } from '@ionic-native/geolocation';
 
 import { MyApp } from './app.component';
-import { HomePage } from '../pages/home/home';
 import { MapPage } from '../pages/map/map';
 
 @NgModule({
   declarations: [
     MyApp,
-    HomePage,
     MapPage
   ],
   imports: [
@@ -22,7 +20,6 @@ import { MapPage } from '../pages/map/map';
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    HomePage,
     MapPage
   ],
   providers: [
