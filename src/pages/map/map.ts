@@ -1,7 +1,7 @@
 import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { IonicPage, NavController } from 'ionic-angular';
 import { PopoverController } from 'ionic-angular';
-import { Map, tileLayer, Marker } from 'leaflet';
+import { Map, tileLayer, Marker, LayerGroup } from 'leaflet';
 import { Subscription } from 'rxjs';
 import { Geoposition } from '@ionic-native/geolocation';
 
@@ -20,6 +20,8 @@ export class MapPage implements OnDestroy {
   private map: Map;
   private currentLocationSubscription: Subscription;
   private currentLocation: Geoposition;
+  private positionMarkersLayer = new LayerGroup<Marker>();
+  private positionMarkers: Marker[] = [];
 
   constructor(
     public navCtrl: NavController,
@@ -57,8 +59,18 @@ export class MapPage implements OnDestroy {
     console.table(geoposition);
     this.currentLocation = geoposition;
     if (this.map) {
-      this.map.setView([this.currentLocation.coords.latitude, this.currentLocation.coords.longitude], 18);
-      new Marker([this.currentLocation.coords.latitude, this.currentLocation.coords.longitude]).addTo(this.map);
+      const lat = this.currentLocation.coords.latitude;
+      const long = this.currentLocation.coords.longitude;
+      const marker = new Marker([lat, long]).addTo(this.map);
+      this.map.setView([lat, long], 18);
+      this.positionMarkers[0] = marker;
+      // this.map.removeLayer(this.positionMarkersLayer);
+      this.positionMarkersLayer.eachLayer((layer) => {
+        this.positionMarkersLayer.removeLayer(layer);
+      })
+      this.map.removeLayer(this.positionMarkersLayer);
+      this.positionMarkersLayer.addTo(this.map);
+      console.log('marker length: ', this.positionMarkers.length);
     }
   }
 }
