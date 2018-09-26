@@ -1,36 +1,51 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { IonicPage, NavController } from 'ionic-angular';
 import { PopoverController } from 'ionic-angular';
-import { Map, tileLayer } from 'leaflet';
+import { Map, tileLayer, Marker } from 'leaflet';
+import { Subscription } from 'rxjs';
+import { Geoposition } from '@ionic-native/geolocation';
 
 import { MenuPage } from '../menu/menu';
-
-/**
- * Generated class for the MapPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
+import { LocationProvider } from '../../providers/location/location';
 
 @IonicPage()
 @Component({
   selector: 'page-map',
   templateUrl: 'map.html',
 })
-export class MapPage {
+export class MapPage implements OnDestroy {
   // TODO: should this guy be private or something?
+  // TODO: rename currentLocation to currentPosition in this class and location provider
   @ViewChild('map') mapContainer: ElementRef;
   private map: Map;
+  private currentLocationSubscription: Subscription;
+  private currentLocation: Geoposition;
 
-  constructor(public navCtrl: NavController, public popoverCtrl: PopoverController) { }
+  constructor(
+    public navCtrl: NavController,
+    public popoverCtrl: PopoverController,
+    public locationProvider: LocationProvider
+  ) {
+    this.currentLocationSubscription = locationProvider.currentLocationBehaviorSubject
+      .subscribe(currentLocation => this.setLocation(currentLocation));
+  }
 
-  ionViewDidEnter() {
+  public ionViewDidEnter(): void {
     this.initMap();
   }
 
-  initMap() {
-    this.map = new Map("map");
-    this.map.setView([41.461675, -75.59813919999999], 14);
+  public ngOnDestroy(): void {
+    this.currentLocationSubscription.unsubscribe();
+  }
+
+  public presentPopover(myEvent): void {
+    let popover = this.popoverCtrl.create(MenuPage);
+    popover.present({ ev: myEvent });
+  }
+
+  private initMap(): void {
+    this.map = new Map('map');
+    this.map.setView([0, 0], 14);
     const tiles = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}{r}.png';
     const attribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
       '&copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
@@ -38,9 +53,13 @@ export class MapPage {
     layer.addTo(this.map);
   }
 
-  presentPopover(myEvent) {
-    let popover = this.popoverCtrl.create(MenuPage);
-    popover.present({ ev: myEvent });
+  private setLocation(geoposition: Geoposition): void {
+    console.table(geoposition);
+    this.currentLocation = geoposition;
+    if (this.map) {
+      this.map.setView([this.currentLocation.coords.latitude, this.currentLocation.coords.longitude], 18);
+      new Marker([this.currentLocation.coords.latitude, this.currentLocation.coords.longitude]).addTo(this.map);
+    }
   }
 }
 
