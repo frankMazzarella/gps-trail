@@ -3,7 +3,7 @@ import { IonicPage, NavController } from 'ionic-angular';
 import { PopoverController } from 'ionic-angular';
 import { Map, tileLayer, Marker, LayerGroup } from 'leaflet';
 import { Subscription } from 'rxjs';
-import { Geoposition } from '@ionic-native/geolocation';
+import { BackgroundGeolocationResponse } from '@ionic-native/background-geolocation';
 
 import { MenuPage } from '../menu/menu';
 import { LocationProvider } from '../../providers/location/location';
@@ -19,7 +19,7 @@ export class MapPage implements OnDestroy {
   @ViewChild('map') mapContainer: ElementRef;
   private map: Map;
   private currentLocationSubscription: Subscription;
-  private currentLocation: Geoposition;
+  private backgroundGeolocationResponse: BackgroundGeolocationResponse;
   private positionMarkersLayer = new LayerGroup<Marker>();
   private positionMarkers: Marker[] = [];
 
@@ -48,28 +48,27 @@ export class MapPage implements OnDestroy {
   private initMap(): void {
     this.map = new Map('map');
     this.map.setView([0, 0], 14);
-    const tiles = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}{r}.png';
-    const attribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
-      '&copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
-    tileLayer(tiles, { attribution, maxZoom: 20 }).addTo(this.map);
+    const tiles = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+    const attribution = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, ' +
+      'Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
+    tileLayer(tiles, { attribution, maxZoom: 19 }).addTo(this.map);
     this.positionMarkersLayer.addTo(this.map);
   }
 
-  private setLocation(geoposition: Geoposition): void {
-    this.currentLocation = geoposition;
+  private setLocation(backgroundGeolocationResponse: BackgroundGeolocationResponse): void {
+    console.log(backgroundGeolocationResponse);
+    this.backgroundGeolocationResponse = backgroundGeolocationResponse;
     if (this.map) {
-      const lat = this.currentLocation.coords.latitude;
-      const long = this.currentLocation.coords.longitude;
+      const lat = this.backgroundGeolocationResponse.latitude;
+      const long = this.backgroundGeolocationResponse.longitude;
       const marker = new Marker([lat, long]);
-      this.positionMarkersLayer.clearLayers();
       this.positionMarkersLayer.addLayer(marker);
-      this.map.setView([lat, long], 18);
+      this.map.setView([lat, long], 19);
     }
   }
 }
 
 /*
-
     const tiles = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}{r}.png';
     const attribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
       '&copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
@@ -81,5 +80,4 @@ export class MapPage implements OnDestroy {
     const tiles = 'https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey={apikey}';
     const attribution = '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, ' +
       '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>';
-
 */

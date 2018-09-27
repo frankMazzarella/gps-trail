@@ -1,24 +1,36 @@
 import { Injectable } from '@angular/core';
-import { Geolocation, Geoposition } from '@ionic-native/geolocation';
 import { ToastController } from 'ionic-angular';
 import { BehaviorSubject } from 'rxjs';
+import {
+  BackgroundGeolocation,
+  BackgroundGeolocationConfig,
+  BackgroundGeolocationResponse
+} from '@ionic-native/background-geolocation';
 
 @Injectable()
 export class LocationProvider {
-  public currentLocationBehaviorSubject = new BehaviorSubject<Geoposition>(undefined);
+  public currentLocationBehaviorSubject = new BehaviorSubject<BackgroundGeolocationResponse>(undefined);
 
-  constructor(public geolocation: Geolocation, public toastController: ToastController) {
+  constructor(public backgroundGeolocation: BackgroundGeolocation, public toastController: ToastController) {
+    const config: BackgroundGeolocationConfig = {
+      desiredAccuracy: 10,
+      stationaryRadius: 20,
+      distanceFilter: 30,
+      debug: true
+    };
     // TODO: handle error
-    geolocation.watchPosition({ enableHighAccuracy: true, maximumAge: 10000 }).subscribe(
+    backgroundGeolocation.configure(config).subscribe(
       location => this.publishCurrentLocation(location)
     );
+
+    backgroundGeolocation.start();
   }
 
   private presentToast(message: string) {
     this.toastController.create({ message, duration: 5000 }).present();
   }
 
-  private publishCurrentLocation(geoposition: Geoposition): void {
+  private publishCurrentLocation(geoposition: BackgroundGeolocationResponse): void {
     this.currentLocationBehaviorSubject.next(geoposition);
   }
 }

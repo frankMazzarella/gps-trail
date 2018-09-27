@@ -3,7 +3,7 @@ import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
-import { Geolocation } from '@ionic-native/geolocation';
+import { BackgroundGeolocation } from '@ionic-native/background-geolocation';
 
 import { MyApp } from './app.component';
 import { MapPage } from '../pages/map/map';
@@ -29,7 +29,7 @@ import { LocationProvider } from '../providers/location/location';
   providers: [
     StatusBar,
     SplashScreen,
-    Geolocation,
+    BackgroundGeolocation,
     LocationProvider,
     { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]
