@@ -51,26 +51,19 @@ export class MapPage implements OnDestroy {
     const tiles = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}{r}.png';
     const attribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
       '&copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
-    const layer = tileLayer(tiles, { attribution, maxZoom: 20 });
-    layer.addTo(this.map);
+    tileLayer(tiles, { attribution, maxZoom: 20 }).addTo(this.map);
+    this.positionMarkersLayer.addTo(this.map);
   }
 
   private setLocation(geoposition: Geoposition): void {
-    console.table(geoposition);
     this.currentLocation = geoposition;
     if (this.map) {
       const lat = this.currentLocation.coords.latitude;
       const long = this.currentLocation.coords.longitude;
-      const marker = new Marker([lat, long]).addTo(this.map);
+      const marker = new Marker([lat, long]);
+      this.positionMarkersLayer.clearLayers();
+      this.positionMarkersLayer.addLayer(marker);
       this.map.setView([lat, long], 18);
-      this.positionMarkers[0] = marker;
-      // this.map.removeLayer(this.positionMarkersLayer);
-      this.positionMarkersLayer.eachLayer((layer) => {
-        this.positionMarkersLayer.removeLayer(layer);
-      })
-      this.map.removeLayer(this.positionMarkersLayer);
-      this.positionMarkersLayer.addTo(this.map);
-      console.log('marker length: ', this.positionMarkers.length);
     }
   }
 }

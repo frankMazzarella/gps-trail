@@ -9,7 +9,7 @@ export class LocationProvider {
 
   constructor(public geolocation: Geolocation, public toastController: ToastController) {
     // TODO: handle error
-    geolocation.watchPosition().subscribe(
+    geolocation.watchPosition({ enableHighAccuracy: true, maximumAge: 10000 }).subscribe(
       location => this.publishCurrentLocation(location)
     );
   }
