@@ -47,16 +47,15 @@ export class MapPage implements OnDestroy {
 
   private initMap(): void {
     this.map = new Map('map');
-    this.map.setView([0, 0], 14);
-    const tiles = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
-    const attribution = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, ' +
-      'Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
+    this.map.setView([20, -80], 3);
+    const tiles = 'https://tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=ce575a1d51d3476f8bb5841222b71159';
+    const attribution = '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, ' +
+      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>';
     tileLayer(tiles, { attribution, maxZoom: 19 }).addTo(this.map);
     this.positionMarkersLayer.addTo(this.map);
   }
 
   private setLocation(backgroundGeolocationResponse: BackgroundGeolocationResponse): void {
-    console.log(backgroundGeolocationResponse);
     this.backgroundGeolocationResponse = backgroundGeolocationResponse;
     if (this.map) {
       const lat = this.backgroundGeolocationResponse.latitude;
@@ -67,17 +66,3 @@ export class MapPage implements OnDestroy {
     }
   }
 }
-
-/*
-    const tiles = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}{r}.png';
-    const attribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
-      '&copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
-
-    const tiles = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
-    const attribution = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, ' +
-      'Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
-
-    const tiles = 'https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey={apikey}';
-    const attribution = '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, ' +
-      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>';
-*/

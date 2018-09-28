@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import {
   BackgroundGeolocation,
   BackgroundGeolocationConfig,
-  BackgroundGeolocationResponse
+  BackgroundGeolocationResponse,
 } from '@ionic-native/background-geolocation';
 
 @Injectable()
@@ -16,21 +16,26 @@ export class LocationProvider {
       desiredAccuracy: 10,
       stationaryRadius: 20,
       distanceFilter: 30,
-      debug: true
     };
-    // TODO: handle error
-    backgroundGeolocation.configure(config).subscribe(
-      location => this.publishCurrentLocation(location)
-    );
 
+    backgroundGeolocation.configure(config).subscribe(
+      location => this.publishCurrentLocation(location),
+      err => this.presentToast(`GPS Error: ${err}`, 10000)
+    );
     backgroundGeolocation.start();
   }
 
-  private presentToast(message: string) {
-    this.toastController.create({ message, duration: 5000 }).present();
+  private presentToast(message: string, duration = 3000) {
+    this.toastController.create({
+      message,
+      duration,
+      closeButtonText: 'Okay',
+      showCloseButton: true
+    }).present();
   }
 
   private publishCurrentLocation(geoposition: BackgroundGeolocationResponse): void {
+    this.presentToast('updating location');
     this.currentLocationBehaviorSubject.next(geoposition);
   }
 }

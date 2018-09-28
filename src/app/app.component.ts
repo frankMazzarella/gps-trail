@@ -19,7 +19,8 @@ export class MyApp {
     public locationProvider: LocationProvider
   ) {
     platform.ready().then(() => {
-      statusBar.styleDefault();
+      statusBar.show();
+      statusBar.styleLightContent();
       splashScreen.hide();
     });
   }
